@@ -1,0 +1,34 @@
+name: Build and Deploy GrooveCast Full-Stack Player
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code Repository
+      uses: actions/checkout@v4
+
+    - name: Set up NodeJS Environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install Project Dependencies
+      run: npm ci
+
+    - name: Run Type Safety Checks (TypeScript Lint)
+      run: npm run lint
+
+    - name: Build Clientside Assets & Server Bundle
+      run: npm run build
+
+    # Code compilation and bundling completed.
+    # To configure automated deployment to Google Cloud Run, specify your GCP Service Credentials below
+    # or link your repository to Cloud Run continuous integration directly inside the GCP Console.

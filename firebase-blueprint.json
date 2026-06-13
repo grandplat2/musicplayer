@@ -1,0 +1,35 @@
+{
+  "entities": {
+    "playlist": {
+      "title": "Playlist",
+      "description": "A shared music player playlist that can be loaded on any device using a short save code.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique short save code in uppercase, e.g., AB12CD."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the playlist."
+        },
+        "songs": {
+          "type": "array",
+          "description": "List of song tracks in the playlist."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time when the playlist was created."
+        }
+      },
+      "required": ["id", "name", "songs", "createdAt"]
+    }
+  },
+  "firestore": {
+    "playlists/{playlistId}": {
+      "schema": "playlist",
+      "description": "Collection of shared playlists, indexed by its unique save code."
+    }
+  }
+}

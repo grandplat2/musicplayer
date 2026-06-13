@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: Default-deny all paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions for validating primitives
+    function isValidId(id) {
+      return id is string && id.size() == 6 && id.matches('^[A-Z0-9]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Helper to validate the Playlist's schema
+    function isValidPlaylist(data) {
+      return data.keys().hasAll(['id', 'name', 'songs', 'createdAt'])
+        && data.keys().size() == 4
+        && data.id is string
+        && data.id.size() == 6
+        && data.name is string
+        && data.name.size() > 0
+        && data.name.size() <= 100
+        && data.songs is list
+        && data.songs.size() <= 200
+        && (data.songs.size() == 0 || data.songs[0] is map)
+        && data.createdAt == request.time;
+    }
+
+    // Playlists collection
+    match /playlists/{playlistId} {
+      // Allow single document lookup to load a playlist via its code
+      allow get: if isValidId(playlistId);
+
+      // Disallow full collection scans (listing/scraping)
+      allow list: if false;
+
+      // Allow anybody to export their playlist as a new save code
+      allow create: if isValidId(playlistId) 
+                     && playlistId == incoming().id
+                     && isValidPlaylist(incoming());
+
+      // Playlists are immutable; no updating or deleting is allowed
+      allow update, delete: if false;
+    }
+  }
+}

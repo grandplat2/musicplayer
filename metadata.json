@@ -1,0 +1,6 @@
+{
+  "name": "Spotify-style Music Player",
+  "description": "A Spotify-like music player with play, pause, shuffle, loop, track controls, and full YouTube playlist import capabilities under shared cloud save-codes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
